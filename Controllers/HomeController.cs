@@ -14,11 +14,7 @@ namespace DataGov_API_Intro_6.Controllers
         HttpClient? httpClient;
 
         static string BASE_URL = "https://data.wa.gov/resource/f6w7-q2d2.json";
-        static string API_KEY = "hcEy0sdQxZG53NCsiQQIsBGH8tmwt2o3gbPmmwcG"; //Add your API key here inside ""
-
-        // Obtaining the API key is easy. The same key should be usable across the entire
-        // data.gov developer network, i.e. all data sources on data.gov.
-        // https://www.nps.gov/subjects/developer/get-started.htm
+        static string API_KEY = "hcEy0sdQxZG53NCsiQQIsBGH8tmwt2o3gbPmmwcG";
 
         public ApplicationDbContext dbContext;
 
@@ -35,35 +31,35 @@ namespace DataGov_API_Intro_6.Controllers
             httpClient.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-            string NATIONAL_PARK_API_PATH = BASE_URL + "?limit=20";
-            string parksData = "";
+            string WA_EV_API_PATH = BASE_URL + "?limit=20";
+            string electricVehicleData = "";
 
-            Parks? parks = null;
+            Vehicles? vehicles = null;
 
             //httpClient.BaseAddress = new Uri(NATIONAL_PARK_API_PATH);
-            httpClient.BaseAddress = new Uri(NATIONAL_PARK_API_PATH);
+            httpClient.BaseAddress = new Uri(WA_EV_API_PATH);
 
             try
             {
                 //HttpResponseMessage response = httpClient.GetAsync(NATIONAL_PARK_API_PATH)
                 //                                        .GetAwaiter().GetResult();
-                HttpResponseMessage response = httpClient.GetAsync(NATIONAL_PARK_API_PATH)
+                HttpResponseMessage response = httpClient.GetAsync(WA_EV_API_PATH)
                                                         .GetAwaiter().GetResult();
 
 
 
                 if (response.IsSuccessStatusCode)
                 {
-                    parksData = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    electricVehicleData = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 }
 
-                if (!parksData.Equals(""))
+                if (!electricVehicleData.Equals(""))
                 {
                     //JsonConvert is part of the NewtonSoft.Json Nuget package
-                    parks = JsonConvert.DeserializeObject<Parks>(parksData);
+                    vehicles = JsonConvert.DeserializeObject<Vehicles>(electricVehicleData);
                 }
 
-                dbContext.Parks.Add(parks);
+                dbContext.Vehicles.Add(vehicles);
                 await dbContext.SaveChangesAsync();
             }
             catch (Exception e)
@@ -72,7 +68,7 @@ namespace DataGov_API_Intro_6.Controllers
                 Console.WriteLine(e.Message);
             }
 
-            return View(parks);
+            return View(vehicles);
             //return View();
         }
     }
